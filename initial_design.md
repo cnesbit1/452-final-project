@@ -4,8 +4,12 @@ Our project is a Chrome browser extension that allows users to organize job appl
 
 ![alt text](image.png)
 ![alt text](image-1.png)
-1. Sketch your initial thinking on your ERD and the data your project will be accessing and using
-2. Sketch rough system design of your project, what are the technologies and pieces (shapes) and interactions (arrows)
+
+**Sketch your initial thinking on your ERD and the data your project will be accessing and using**
+Mostly text (scraped from the job posting or inputed by the user), date, bigint, enum. Also using S3 potentially as a way to store resume PDFs.
+![alt text](InitialERD.png)
+
+**Sketch rough system design of your project, what are the technologies and pieces (shapes) and interactions (arrows)**
 
 ### Initial Goals/Tasks for November 2025
 
