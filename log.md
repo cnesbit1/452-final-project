@@ -8,8 +8,8 @@
 | 2025-10-31 | Discussed Initial Browser Ext Idea | 1.0   |   Kate |
 | 2025-10-31 | Discussed Initial Browser Ext Idea | 1.0   |  Katie |
 | 2025-11-01 | Initial Project Design | 0.5  | Katie |
-
-- **Connor Hours**:1.0
-- **Katie Hours**: 1.0
+| 2025-11-01 | Initial Project Design (Summary and Goals) | 0.5  | Connor |
+- **Connor Hours**:1.5
+- **Katie Hours**: 1.5
 - **Kate Hours**: 1.0
-- **Total**: 3.0
+- **Total**: 4.0
