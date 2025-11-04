@@ -8,8 +8,9 @@
 | 2025-10-31 | Discussed Initial Browser Ext Idea | 1.0   |   Kate |
 | 2025-10-31 | Discussed Initial Browser Ext Idea | 1.0   |  Katie |
 | 2025-11-01 | Initial Project Design | 0.5  | Katie |
+| 2025-11-04 | Find & set-up browser extension | 1.5  | Katie |
 
 - **Connor Hours**:1.0
-- **Katie Hours**: 1.0
+- **Katie Hours**: 3
 - **Kate Hours**: 1.0
 - **Total**: 3.0
