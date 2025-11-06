@@ -1,14 +1,11 @@
 import './auth.css';
 interface Props{
-   // onEnterFunction: (param: React.KeyboardEvent<HTMLElement>) => void;
     setPassword: (param: string) => void;
     setUsername: (param: string) => void;
     handleSubmit: (param: React.FormEvent) => void;
     username: string;
     password: string;
-
 }
-
 
 function Auth(props : Props){
     return (
