@@ -38,7 +38,7 @@ function Login() {
       setPassword("");
       navigate("/");
     } catch (error) {
-      setError("Network error — please check the server or your connection.");
+      setError("Network error — please check the server or your connection." + String(error));
       console.error(error);
       // Handle network or other errors
     }
