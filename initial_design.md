@@ -2,15 +2,13 @@
 
 Our project is a Chrome browser extension that allows users to organize job applications. To do that, this extension will store job application details, store your associated resume and transcript, calculate the status of your application and present associated stats. Our goal is to deliver all of these features in one month.
 
-![alt text](image.png)
-![alt text](image-1.png)
+![alt text](initial_design_images/example_chrome_extension1.png)
+![alt text](initial_design_images/example_chrome_extension2.png)
 
-**Sketch your initial thinking on your ERD and the data your project will be accessing and using**
 Mostly text (scraped from the job posting or inputed by the user), date, bigint, enum. Also using S3 potentially as a way to store resume PDFs.
-![alt text](InitialERD.png)
+![alt text](initial_design_images/initial_erd.png)
 
-**Sketch rough system design of your project, what are the technologies and pieces (shapes) and interactions (arrows)**
-![system design](system_design.png)
+![system design](initial_design_images/system_design.png)
 
 ### Initial Goals/Tasks for November 2025
 
