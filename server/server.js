@@ -1,8 +1,105 @@
 import express from "express";
 import { query, warmup, close } from "./db.js";
+import bcrypt from "bcryptjs";
 
 const app = express();
 app.use(express.json());
+
+// CORS middleware - allow requests from the frontend dev server
+// In production you should restrict this to your real frontend origin or use the `cors` package.
+app.use((req, res, next) => {
+  // Adjust the origin as needed for development/testing
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  // Allow preflight requests to short-circuit
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
+app.post("/v1/auth/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password required" });
+    }
+
+    // Query the auth table to find the user
+    const { rows: auth_rows } = await query(
+      `SELECT a.user_id, a.username, a.password_hash 
+       FROM app.auth a
+       WHERE a.username = $1`,
+      [username]
+    );
+
+    if (auth_rows.length === 0) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const validated = await bcrypt.compare(password, auth_rows[0].password_hash); // (plaintext password, hashed password)
+    if (!validated) { // incorrect password
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // Send back user info (excluding password)
+    res.json({
+      user_id: auth_rows[0].user_id,
+      username: auth_rows[0].username
+    });
+  } catch (e) {
+    console.error('Login error:', e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/v1/auth/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: "Username and password required" });
+    }
+    // verify that username is not already in use
+    const { rows: user_rows } = await query(
+      `SELECT a.user_id, a.username 
+       FROM app.auth a
+       WHERE a.username = $1`,
+      [username]
+    );
+
+    if (user_rows.length !== 0) {
+      return res.status(401).json({ error: "Username in use" });
+    }
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // TODO: first create row in users table, then insert user into auth table using that userID
+    const { rows } = await query(
+      `INSERT INTO app.users DEFAULT VALUES RETURNING id;`
+    );
+    const newId = rows[0].id;
+    const { rows: auth_rows} = await query(
+      `INSERT INTO app.auth(username, password_hash, user_id)
+      VALUES ($1, $2, $3)
+      RETURNING id`, [username, hashedPassword, newId]
+    );
+
+    console.log("User created", auth_rows);
+    if (auth_rows === 0) {
+      res.status(400).json({ error: "User not added to auth table" })
+    }
+
+    // Send back user info (excluding password)
+    res.json({
+      user_id: rows[0].user_id,
+      username: rows[0].username
+    });
+  } catch (e) {
+    console.error('Register error:', e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 app.get("/healthz", async (_req, res) => {
   try {
