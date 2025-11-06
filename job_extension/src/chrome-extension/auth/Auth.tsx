@@ -3,8 +3,8 @@ interface Props{
     setPassword: (param: string) => void;
     setUsername: (param: string) => void;
     handleSubmit: (param: React.FormEvent) => void;
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 function Auth(props : Props){
