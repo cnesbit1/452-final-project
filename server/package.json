@@ -1,0 +1,17 @@
+{
+  "name": "timescale-node-starter",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Minimal Express + pg starter for Timescale/Postgres with pooled connection and health check.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node scripts/migrate.js",
+    "inspect": "node scripts/inspect.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.1"
+  }
+}
