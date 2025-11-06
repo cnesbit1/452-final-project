@@ -12,8 +12,9 @@
 | 2025-11-03 | Investigate and create system design       | 0.5   |   Kate |
 | 2025-11-04 | Find & set-up browser extension            | 1.5   |  Katie |
 | 2025-11-05 | Setup Server and Database Hosting          | 3     | Connor |
+| 2025-11-05 | FE for login and register          | 1.5     | Katie |
 
 - **Connor Hours**: 4.5
-- **Katie Hours**: 3
+- **Katie Hours**: 4.5
 - **Kate Hours**: 1.5
 - **Total**: 9.0
