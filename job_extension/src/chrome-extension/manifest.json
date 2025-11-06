@@ -5,6 +5,10 @@
     "action" : {
       "default_popup": "popup.html"
   },
+  "host_permissions": [
+    "http://localhost:8080/*",
+    "http://127.0.0.1:8080/*"
+  ],
   "options_page": "options.html",
   "description": "This is the description of your extension",
   "icons": {

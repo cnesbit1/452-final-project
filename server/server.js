@@ -1,9 +1,11 @@
 import express from "express";
 import { query, warmup, close } from "./db.js";
 import bcrypt from "bcryptjs";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 // CORS middleware - allow requests from the frontend dev server
 // In production you should restrict this to your real frontend origin or use the `cors` package.
