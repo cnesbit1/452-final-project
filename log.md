@@ -14,8 +14,9 @@
 | 2025-11-05 | Setup Server and Database Hosting          | 3     | Connor |
 | 2025-11-05 | FE for login and register          | 1.5     | Katie |
 | 2025-11-06 | FE & BE for login and register          | 3     | Katie |
+| 2025-11-06 | Tools page, UI for add-job         | 2     | Katie |
 
 - **Connor Hours**: 4.5
-- **Katie Hours**: 7.5
+- **Katie Hours**: 9.5
 - **Kate Hours**: 1.5
 - **Total**: 9.0
