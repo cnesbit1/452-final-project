@@ -34,9 +34,7 @@ function Register() {
         return;
       }
 
-      setUsername("");
-      setPassword("");
-      navigate("/");
+      navigate("/Tools");
     } catch (error) {
       setError("Network error — please check the server or your connection.");
       console.error(error);
