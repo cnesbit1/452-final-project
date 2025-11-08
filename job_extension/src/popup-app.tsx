@@ -1,10 +1,10 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Popup } from "./chrome-extension/popup";
-import Login from "./chrome-extension/auth/Login";
+import { Popup } from "./components/popup";
+import Login from "./components/auth/Login";
 import { useEffect } from "react";
-import Register from "./chrome-extension/auth/Register";
-import Tools from "./chrome-extension/tools/Tools";
-import AddJob from "./chrome-extension/add_job/AddJob";
+import Register from "./components/auth/Register";
+import Tools from "./components/tools/Tools";
+import AddJob from "./components/add_job/AddJob";
 // import Home from "./pages/Home";
 // import About from "./pages/About";
 // import NotFound from "./pages/NotFound";
