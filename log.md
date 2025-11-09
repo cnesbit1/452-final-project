@@ -18,8 +18,10 @@
 | 2025-11-7 | Discussed next week plans        | 1.0   | Connor |
 | 2025-11-7 | Discussed next week plans       | 1.0   |   Kate |
 | 2025-11-7 | Discussed next week plans        | 1.0   |  Katie |
+| 2025-11-7 | Trying to access page html/href        | 2.0   |  Katie |
+| 2025-11-7 | Adding authtoken, adding job to db, trying to fix stalled db        | 3.0   |  Katie |
 
 - **Connor Hours**: 5.5
-- **Katie Hours**: 10.5
+- **Katie Hours**: 15.5
 - **Kate Hours**: 2.5
 - **Total**: 9.0
