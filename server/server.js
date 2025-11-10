@@ -2,6 +2,7 @@ import express from "express";
 import { query, warmup, close } from "./db.js";
 import bcrypt from "bcryptjs";
 import cors from "cors";
+import { createAuthToken } from './helperMethods.js';
 
 const app = express();
 app.use(express.json());
@@ -19,10 +20,67 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/v1/auth/status", async (req, res) =>{
+  try{
+    const authHeader = req.headers['authorization'];
+    if(!authHeader){
+      return res.status(400).json({ error: "No authorization header"});
+    }
+    const parts = authHeader.split(' ');
+    if(parts.length !== 2){
+      return res.status(400).json({ error: "Format Bearer [authtoken]"});
+    }
+    
+    const authtoken = parts[1];
+    const { rows: token_rows } = await query(
+      `SELECT a.user_id 
+       FROM app.authtoken a
+       WHERE a.token = $1`,
+      [authtoken]
+    );
+    if(token_rows.length === 0){
+      return res.status(401).json({ authenticated: false });
+    }
+    return res.status(200).json({ authenticated: true });
+  }
+  catch (e) {
+    console.error('checking login status error:', e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/v1/auth/logout", async (req, res) => {
+  try {
+    // they give me authtoken I remove from table and say success
+    const authHeader = req.headers['authorization'];
+    if(!authHeader){
+      return res.status(400).json({ error: "No authorization header"});
+    }
+    const parts = authHeader.split(' ');
+    if(parts.length !== 2){
+      return res.status(400).json({ error: "Format Bearer [authtoken]"});
+    }
+    
+    const authtoken = parts[1];
+    const { rows: token_rows } = await query(
+      `DELETE 
+       FROM app.authtoken
+       WHERE token = $1 RETURNING *`,
+      [authtoken]
+    );
+    if(token_rows.length === 0){
+      return res.status(401).json({ error: "error deleting authtoken"});
+    }
+    return res.status(200).json({success: true});
+  } catch (e) {
+    console.error('logout error:', e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/v1/auth/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    
     if (!username || !password) {
       return res.status(400).json({ error: "Username and password required" });
     }
@@ -43,11 +101,16 @@ app.post("/v1/auth/login", async (req, res) => {
     if (!validated) { // incorrect password
       return res.status(401).json({ error: "Invalid credentials" });
     }
+    const {authtoken, success} = await createAuthToken(auth_rows[0].user_id);
+    if(!success){
+      return res.status(401).json({ error: "Failed to create authtoken" });
+    }
 
     // Send back user info (excluding password)
     res.json({
       user_id: auth_rows[0].user_id,
-      username: auth_rows[0].username
+      username: auth_rows[0].username,
+      token: authtoken
     });
   } catch (e) {
     console.error('Login error:', e);
@@ -81,18 +144,23 @@ app.post("/v1/auth/register", async (req, res) => {
     const { rows: auth_rows} = await query(
       `INSERT INTO app.auth(username, password_hash, user_id)
       VALUES ($1, $2, $3)
-      RETURNING id`, [username, hashedPassword, newId]
+      RETURNING user_id`, [username, hashedPassword, newId]
     );
 
     console.log("User created", auth_rows);
     if (auth_rows === 0) {
       res.status(400).json({ error: "User not added to auth table" })
     }
+    const {authtoken, success} = await createAuthToken(auth_rows[0].user_id);
+    if(!success){
+      return res.status(401).json({ error: "Failed to create authtoken" });
+    }
 
     // Send back user info (excluding password)
     res.json({
-      user_id: rows[0].user_id,
-      username: rows[0].username
+      user_id: auth_rows[0].user_id,
+      username: username,
+      token: authtoken
     });
   } catch (e) {
     console.error('Register error:', e);
@@ -102,71 +170,62 @@ app.post("/v1/auth/register", async (req, res) => {
 
 app.post("/v1/tools/add-job", async (req, res) => {
   try {
-    // TODO: Finish this endpoint: this is just register copied over as filler
-
-    
-    const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ error: "Username and password required" });
-    }
-    // verify that username is not already in use
-    const { rows: user_rows } = await query(
-      `SELECT a.user_id, a.username 
-       FROM app.auth a
-       WHERE a.username = $1`,
-      [username]
-    );
-
-    if (user_rows.length !== 0) {
-      return res.status(401).json({ error: "Username in use" });
-    }
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // TODO: first create row in users table, then insert user into auth table using that userID
-    const { rows } = await query(
-      `INSERT INTO app.users DEFAULT VALUES RETURNING id;`
-    );
-    const newId = rows[0].id;
-    const { rows: auth_rows} = await query(
-      `INSERT INTO app.auth(username, password_hash, user_id)
-      VALUES ($1, $2, $3)
-      RETURNING id`, [username, hashedPassword, newId]
-    );
-
-    console.log("User created", auth_rows);
-    if (auth_rows === 0) {
-      res.status(400).json({ error: "User not added to auth table" })
+    const {authToken, companyName, position, description, href, resumeFile} = req.body
+    if(!authToken || !companyName || !position | !href){
+      return res.status(400).json({ error: "authtoken, company, position and link are required" });
     }
 
-    // Send back user info (excluding password)
-    res.json({
-      user_id: rows[0].user_id,
-      username: rows[0].username
-    });
+    // use authtoken to get user_id and do verification
+    const { rows: token_rows } = await query(
+      `SELECT a.user_id 
+       FROM app.authtoken a
+       WHERE a.token = $1`,
+      [authToken]
+    );
+    if(token_rows.length === 0){
+      return res.status(400).json({ error: "Unauthorized" });
+    }
+    const user_id = token_rows[0].user_id
+
+    let resumeText = undefined
+    let resumeS3Link = undefined
+
+    if(resumeFile){
+      // TODO: INSERT resume into S3 and get the link
+      // get the text from the resume file and insert that
+      console.log("I received a resume")
+
+    }
+
+    const currentDate = new Date().toISOString();
+
+    // dynamic insertion allowing for several fields to be empty
+    const data = {
+      user_id: user_id,
+      date_applied: currentDate,
+      company_name: companyName,
+      position: position,
+      posting_link: href,
+      posting_description: description,
+      resume_text: resumeText,
+      resume_s3_link: resumeS3Link 
+    };
+    // construct statement
+    const allFields = ["user_id", "date_applied", "company_name", "position", "posting_link", "posting_description", "resume_text", "resume_s3_link"]
+    const presentFields = allFields.filter(field => data[field] !== undefined);
+    const values = presentFields.map(field => data[field]);
+    const placeholders = presentFields.map((_, index) => `$${index + 1}`).join(', ');
+    const columns = presentFields.join(', ');
+
+    const { rows: job_rows} = await query(
+      `INSERT INTO app.jobs (${columns})
+        VALUES (${placeholders})
+        RETURNING id;`, values);
   } catch (e) {
-    console.error('Register error:', e);
+    console.error('Add job error:', e);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-// CREATE TABLE IF NOT EXISTS app.jobs (
-//   id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-//   user_id BIGINT NOT NULL REFERENCES app.users(id) ON DELETE CASCADE,
-//   date_applied DATE,
-//   last_date_updated DATE DEFAULT CURRENT_DATE,
-//   company_name TEXT NOT NULL,
-//   status app.job_status NOT NULL DEFAULT 'saved',
-//   position TEXT NOT NULL,
-//   posting_link TEXT,
-//   posting_description TEXT,
-//   resume_text TEXT,
-//   resume_s3_link TEXT,
-//   created_at TIMESTAMPTZ DEFAULT now()
-// );
-
 
 app.get("/healthz", async (_req, res) => {
   try {

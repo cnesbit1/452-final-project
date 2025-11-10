@@ -33,7 +33,7 @@ function Register() {
         setError(String(message));
         return;
       }
-
+      await chrome.storage.local.set({ authToken: body.token });
       navigate("/Tools");
     } catch (error) {
       setError("Network error — please check the server or your connection.");

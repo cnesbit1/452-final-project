@@ -5,7 +5,6 @@ import { pool } from '../db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sql = await fs.readFile(path.join(__dirname, '../schema.sql'), 'utf8');
-
 try {
   await pool.query('BEGIN');
   await pool.query(sql);
@@ -16,5 +15,6 @@ try {
   console.error('Migration failed:', e.message);
   process.exit(1);
 } finally {
+  client.release();
   await pool.end();
 }

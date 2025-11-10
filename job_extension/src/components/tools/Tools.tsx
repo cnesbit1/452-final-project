@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import './Tools.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScroll } from '@fortawesome/free-solid-svg-icons';
+
 function Tools(){
+  const navigate = useNavigate();
   const tools = [
     {
       id: 1,
@@ -22,10 +24,32 @@ function Tools(){
     // Add more tools here...
   ];
 
+  const handleLogout = async () => {
+    try {
+      const { authToken } = await chrome.storage.local.get("authToken");
+      const res = await fetch("http://localhost:8080/v1/auth/logout", {
+        method: "POST",
+        headers: { authorization: `Bearer ${authToken}` },
+      });
+
+      if (!res.ok) {
+        console.error("Request failed:", res.status);
+        return;
+      }
+      await chrome.storage.local.remove("authToken");
+      navigate("/Login");
+    } catch (err) {
+      console.error("Error calling backend:", err);
+    }
+  };
+
   return (
     <div className="tools-container">
       <h2 className="tools-header">Application Tools</h2>
       <p className="tools-subheader">Select an action to get started.</p>
+      <button onClick={handleLogout} className="my-button">
+      Logout
+     </button>
 
       <div className="tools-list">
         {tools.map((tool) => (
