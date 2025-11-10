@@ -20,6 +20,7 @@
 | 2025-11-7 | Discussed next week plans        | 1.0   |  Katie |
 | 2025-11-7 | Trying to access page html/href        | 2.0   |  Katie |
 | 2025-11-8 | Adding authtoken, adding job to db, trying to fix stalled db        | 3.0   |  Katie |
+| 2025-11-9 | authtoken -> auto-login, logout, bug fixes for adding jobs and logging in with authtoken       | 2.0   |  Katie |
 
 - **Connor Hours**: 5.5
 - **Katie Hours**: 15.5
