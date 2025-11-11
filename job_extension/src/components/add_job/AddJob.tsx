@@ -4,18 +4,44 @@ import { Link, useNavigate } from "react-router-dom";
 function AddJob() {
   const [companyName, setCompanyName] = useState("");
   const [position, setPosition] = useState("");
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
+  const [resumeBytes, setResumeBytes] = useState<Uint8Array>(new Uint8Array());
+  const [resumeFileExtension, setResumeFileExtension] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleFileChange = (event: any) => {
+  const handleResumeFile = (event: any) => {
     if (event.target.files.length > 0) {
-      setResumeFile(event.target.files[0]); // Store the first file
-      console.log("File selected:", event.target.files[0].name);
+      let file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const resumeStringBase64 = event.target?.result as string;
+
+        // Remove unnecessary file metadata from the start of the string.
+        const resumeStringBase64BufferContents =
+          resumeStringBase64.split("base64,")[1];
+
+        const binaryString = atob(resumeStringBase64BufferContents);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        setResumeBytes(bytes);
+      };
+      reader.readAsDataURL(file);
+
+      // Set resume file extension (and move to a separate method)
+      const fileExtension = getFileExtension(file);
+      if (fileExtension) {
+        setResumeFileExtension(fileExtension);
+      }
     } else {
-      setResumeFile(null);
+      setResumeBytes(new Uint8Array());
     }
+  };
+
+  const getFileExtension = (file: File): string | undefined => {
+    return file.name.split(".").pop();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,7 +51,7 @@ function AddJob() {
     setPosition("");
     navigate("/Tools");
     console.log(error);
-    console.log(resumeFile);
+    console.log(resumeBytes);
 
     chrome.runtime.sendMessage({ type: "GET_PAGE_HREF" }, async (response) => {
       let href = response.url;
@@ -41,7 +67,8 @@ function AddJob() {
             position,
             description,
             href,
-            resumeFile,
+            resumeBytes,
+            resumeFileExtension
           }),
         });
 
@@ -112,7 +139,7 @@ function AddJob() {
           />
         </div>
 
-        <input type="file" onChange={handleFileChange} id="file-upload-input" />
+        <input type="file" onChange={handleResumeFile} id="file-upload-input" />
 
         <div className="button-group">
           <button

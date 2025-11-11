@@ -3,10 +3,12 @@ import { query, warmup, close } from "./db.js";
 import bcrypt from "bcryptjs";
 import cors from "cors";
 import { createAuthToken } from './helperMethods.js';
+import { ResumeS3DAO } from './s3.js';
 
 const app = express();
-app.use(express.json());
 app.use(cors())
+app.use(express.json({ limit: '10mb' })); // increase payload size limit for sending pdfs
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // CORS middleware - allow requests from the frontend dev server
 // In production you should restrict this to your real frontend origin or use the `cors` package.
@@ -170,7 +172,7 @@ app.post("/v1/auth/register", async (req, res) => {
 
 app.post("/v1/tools/add-job", async (req, res) => {
   try {
-    const {authToken, companyName, position, description, href, resumeFile} = req.body
+    const {authToken, companyName, position, description, href, resumeBytes, resumeFileExtension} = req.body
     if(!authToken || !companyName || !position | !href){
       return res.status(400).json({ error: "authtoken, company, position and link are required" });
     }
@@ -190,11 +192,11 @@ app.post("/v1/tools/add-job", async (req, res) => {
     let resumeText = undefined
     let resumeS3Link = undefined
 
-    if(resumeFile){
-      // TODO: INSERT resume into S3 and get the link
+    if(resumeBytes){
       // get the text from the resume file and insert that
-      console.log("I received a resume")
-
+      let s3DAO = new ResumeS3DAO();
+      resumeS3Link = await s3DAO.putResume(resumeBytes, resumeFileExtension);
+      console.log("resume stored with resume/", resumeS3Link);
     }
 
     const currentDate = new Date().toISOString();
