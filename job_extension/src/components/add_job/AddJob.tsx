@@ -6,7 +6,7 @@ function AddJob() {
   const [position, setPosition] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
-  const [resumeBytes, setResumeBytes] = useState<Uint8Array>(new Uint8Array());
+  const [resumeBytes, setResumeBytes] = useState<Uint8Array | null>(null);
   const [resumeFileExtension, setResumeFileExtension] = useState<string>("");
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function AddJob() {
         setResumeFileExtension(fileExtension);
       }
     } else {
-      setResumeBytes(new Uint8Array());
+      setResumeBytes(null);
     }
   };
 
