@@ -15,6 +15,5 @@ try {
   console.error('Migration failed:', e.message);
   process.exit(1);
 } finally {
-  client.release();
   await pool.end();
 }
