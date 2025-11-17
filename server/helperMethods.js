@@ -23,7 +23,7 @@ function generateToken() {
 export async function createAuthToken(user_id){
   const authtoken = generateToken();
   const { rows: token_rows } = await query(
-    `INSERT INTO app.authtoken (user_id, token) VALUES ($1, $2) RETURNING *;`, [user_id, authtoken]
+    `INSERT INTO app.auths (user_id, token) VALUES ($1, $2) RETURNING *;`, [user_id, authtoken]
   );
   if (token_rows.length === 0) {
     console.log({authtoken: authtoken, success: false})
