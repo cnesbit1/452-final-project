@@ -23,9 +23,10 @@
 | 2025-11-17 | Updated database and endpoints to match change in tables                                 | 1.5   | Connor |
 | 2025-11-17 | In-class progress discussion                                                             | 0.5   | All 3  |
 | 2025-11-18 | Cleaned up endpoints and added general jobs endpoint                                     | 1.0   | Connor |
+| 2025-11-19 | Progress report and planning                                                             | 0.5   | All 3  |
 | 2025-11-19 | Create more cohesive FE                                                                  | 2.0   | Kate   |
 
-- **Connor Hours**: 11.0
-- **Katie Hours**: 20
-- **Kate Hours**: 6
-- **Total**: 9.0
+- **Connor Hours**: 13
+- **Katie Hours**: 22
+- **Kate Hours**: 6.5
+- **Total**: 41.5
