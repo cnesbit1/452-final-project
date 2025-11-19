@@ -14,6 +14,7 @@ export default defineConfig({
         { src: "src/chrome-extension/public/32.png", dest: "./public" },
         { src: "src/chrome-extension/public/48.png", dest: "./public" },
         { src: "src/chrome-extension/public/192.png", dest: "./public" },
+        { src: "src/chrome-extension/public/sadicon.png", dest: "./public" },
       ],
     }),
   ],
@@ -24,8 +25,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, "popup.html"),
-        options: resolve(__dirname, "options.html"),
-        background: resolve(__dirname, "src/chrome-extension/background/background.ts"),
+        background: resolve(
+          __dirname,
+          "src/chrome-extension/background/background.ts"
+        ),
       },
       output: {
         entryFileNames: "[name].js",

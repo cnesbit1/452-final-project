@@ -1,20 +1,16 @@
 {
-    "manifest_version": 3,
-    "name": "The Joblessness Optimizer",
-    "version": "1.0.0",
-    "action" : {
-      "default_popup": "popup.html"
-    },
-    "permissions": ["scripting", "activeTab", "storage"],
-    "background": {
+  "manifest_version": 3,
+  "name": "The Joblessness Optimizer",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["scripting", "activeTab", "storage"],
+  "background": {
     "service_worker": "background.js",
     "type": "module"
-    },
-  "host_permissions": [
-    "http://localhost:8080/*",
-    "http://127.0.0.1:8080/*"
-  ],
-  "options_page": "options.html",
+  },
+  "host_permissions": ["http://localhost:8080/*", "http://127.0.0.1:8080/*"],
   "description": "This is the description of your extension",
   "icons": {
     "16": "public/16.png",
@@ -22,4 +18,4 @@
     "48": "public/48.png",
     "192": "public/192.png"
   }
-  }
+}

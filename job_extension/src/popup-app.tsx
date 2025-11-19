@@ -1,10 +1,8 @@
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { Popup } from "./components/popup";
 import Login from "./components/auth/Login";
 import { useEffect, useState } from "react";
 import Register from "./components/auth/Register";
-import Tools from "./components/tools/Tools";
-import AddJob from "./components/add_job/AddJob";
+import Wrapper from "./components/wrapper/Wrapper";
 // the default path is *
 function App() {
   const navigate = useNavigate();
@@ -39,10 +37,9 @@ function App() {
         element={verified ? <Navigate to="/Tools" replace /> : <Login />}
       />
       <Route path="/Register" element={<Register />} />
-      <Route path="/Tools" element={<Tools/>} />
-      <Route path="/AddJob" element={<AddJob />} />
-      <Route path="/" element={<Popup />} />
-      <Route path="*" element={<Popup />} />
+      <Route path="/Tools" element={<Wrapper />} />
+      <Route path="/" element={<Wrapper />} />
+      <Route path="*" element={<Wrapper />} />
     </Routes>
   );
 }

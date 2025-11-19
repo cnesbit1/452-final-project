@@ -4,9 +4,7 @@
 
 | Date       | What                                                                                     | Hours | Person |
 | ---------- | ---------------------------------------------------------------------------------------- | ----- | -----: |
-| 2025-10-31 | Discussed Initial Browser Ext Idea                                                       | 1.0   | Connor |
-| 2025-10-31 | Discussed Initial Browser Ext Idea                                                       | 1.0   |   Kate |
-| 2025-10-31 | Discussed Initial Browser Ext Idea                                                       | 1.0   |  Katie |
+| 2025-10-31 | Discussed Initial Browser Ext Idea                                                       | 1.0   | All 3  |
 | 2025-11-01 | Initial Project Design                                                                   | 0.5   |  Katie |
 | 2025-11-01 | Initial Project Design (Summary and Goals)                                               | 0.5   | Connor |
 | 2025-11-03 | Investigate and create system design                                                     | 0.5   |   Kate |
@@ -15,18 +13,19 @@
 | 2025-11-05 | FE for login and register                                                                | 1.5   |  Katie |
 | 2025-11-06 | FE & BE for login and register                                                           | 3     |  Katie |
 | 2025-11-06 | Tools page, UI for add-job                                                               | 2     |  Katie |
-| 2025-11-7  | Discussed next week plans                                                                | 1.0   | Connor |
-| 2025-11-7  | Discussed next week plans                                                                | 1.0   |   Kate |
-| 2025-11-7  | Discussed next week plans                                                                | 1.0   |  Katie |
+| 2025-11-7  | Discussed next week plans                                                                | 1.0   | All 3  |
 | 2025-11-7  | Trying to access page html/href                                                          | 2.0   |  Katie |
 | 2025-11-8  | Adding authtoken, adding job to db, trying to fix stalled db                             | 3.0   |  Katie |
 | 2025-11-9  | authtoken -> auto-login, logout, bug fixes for adding jobs and logging in with authtoken | 2.0   |  Katie |
 | 2025-11-13 | Researched and produced current ERD and systems report                                   | 3.0   | Connor |
+| 2025-11-14 | ERD and systems interview, progess report.                                               | 1.0   | All 3  |
 | 2025-11-11 | s3, uploading resumes to s3                                                              | 2.5   |  Katie |
 | 2025-11-17 | Updated database and endpoints to match change in tables                                 | 1.5   | Connor |
+| 2025-11-17 | In-class progress discussion                                                             | 0.5   | All 3  |
 | 2025-11-18 | Cleaned up endpoints and added general jobs endpoint                                     | 1.0   | Connor |
+| 2025-11-19 | Create more cohesive FE                                                                  | 2.0   | Kate   |
 
 - **Connor Hours**: 11.0
 - **Katie Hours**: 20
-- **Kate Hours**: 2.5
+- **Kate Hours**: 6
 - **Total**: 9.0

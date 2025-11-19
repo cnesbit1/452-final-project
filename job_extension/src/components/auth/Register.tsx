@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Auth from "./Auth";
-import './auth.css';
 import { Link, useNavigate } from "react-router-dom";
 
 function Register() {

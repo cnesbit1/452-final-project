@@ -1,4 +1,3 @@
-import './auth.css';
 interface Props{
     setPassword: (param: string) => void;
     setUsername: (param: string) => void;

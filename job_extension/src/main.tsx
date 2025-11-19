@@ -4,15 +4,16 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./popup-app";
 import { StrictMode } from "react";
 
-
 createRoot(document.getElementById("root")!).render(
-
   <StrictMode>
-    {/* Small, compact container for the browser action popup */}
-    <div className="bg-white w-[360px] max-h-[640px] p-4 rounded-md shadow-md">
+    {/* Wider container for the job tracking extension popup */}
+    <div
+      className="w-[600px] min-h-[650px] max-h-[750px] overflow-auto"
+      style={{ backgroundColor: "#f8e9d2" }}
+    >
       <BrowserRouter>
-      <App />
-    </BrowserRouter>
+        <App />
+      </BrowserRouter>
     </div>
   </StrictMode>
 );
