@@ -13,20 +13,16 @@ FROM information_schema.views
 WHERE table_schema NOT IN ('pg_catalog','information_schema')
 ORDER BY 1,2;`;
 
-const qTokens = `SELECT * FROM app.authtoken;`
-
 const qJobs = `SELECT * FROM app.jobs;`
 
 try {
   const t = await pool.query(qTables);
   const v = await pool.query(qViews);
-  const j = await pool.query(qTokens);
   const k = await pool.query(qJobs);
   console.log("\nTables:");
   console.table(t.rows);
   console.log("\nViews:");
   console.table(v.rows);
-  console.table(j.rows);
   k.rows.forEach((row, index) => {
     console.log(`\n--- Job Row ${index + 1} ---`);
     // Iterate over the keys (column names) of the current row

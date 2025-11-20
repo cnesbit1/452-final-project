@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS app.jobs (
   date_applied DATE,
   last_date_updated DATE DEFAULT CURRENT_DATE,
   company_name TEXT NOT NULL REFERENCES app.company(company_name) ON DELETE CASCADE,
-  status app.job_status NOT NULL DEFAULT 'saved',
+  status app.job_status NOT NULL DEFAULT 'applied',
   position TEXT NOT NULL,
   posting_link TEXT,
   posting_description TEXT,
