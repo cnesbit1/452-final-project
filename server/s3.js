@@ -21,10 +21,11 @@ export class ResumeS3DAO{
         const receivedUint8Array = new Uint8Array(Object.values(resumeStringBase64Encoded));
         const pdfBuffer = Buffer.from(receivedUint8Array, 'base64');
 
-        let fileName = this.generateFileName(); // randomly generated
+        let randomName = this.generateFileName(); // randomly generated
+        let filename = "resume/" + randomName + "." + resumeFileExtension;
         const s3Params = {
           Bucket: this.BUCKET,
-          Key: "resume/" + fileName + "." + resumeFileExtension,
+          Key: filename,
           Body: pdfBuffer,
           ContentType: "application/pdf",
         };
@@ -32,14 +33,14 @@ export class ResumeS3DAO{
         const client = new S3Client({ region: this.REGION });
         try {
           await client.send(c);
-          return fileName;
+          return filename;
         } catch (error) {
           throw Error("s3 put resume failed with: " + error);
         }
       }
 
     async getResume(resumeUrl){
-        const client = new S3Client();
+        const client = new S3Client({ region: this.REGION });
         const command = new GetObjectCommand({
             Bucket: this.BUCKET,
             Key: resumeUrl

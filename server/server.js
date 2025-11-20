@@ -2,7 +2,7 @@ import express from "express";
 import { query, warmup, close } from "./db.js";
 import bcrypt from "bcryptjs";
 import cors from "cors";
-import { createAuthToken } from "./helperMethods.js";
+import { createAuthToken, autoUpdateJobStatuses, validateAndGetUserIdFromAuthToken } from "./helperMethods.js";
 import { ResumeS3DAO } from "./s3.js";
 
 const app = express();
@@ -248,6 +248,7 @@ app.post("/v1/tools/add-job", async (req, res) => {
         RETURNING id;`,
       values
     );
+    console.log("Job added:", job_rows);
   } catch (e) {
     console.error("Add job error:", e);
     res.status(500).json({ error: "Internal server error" });
@@ -256,30 +257,10 @@ app.post("/v1/tools/add-job", async (req, res) => {
 
 app.get("/v1/tools/jobs", async (req, res) => {
   try {
-    const authHeader = req.headers["authorization"];
-    if (!authHeader) {
-      return res.status(400).json({ error: "No authorization header" });
-    }
-    const parts = authHeader.split(" ");
-    if (parts.length !== 2 || parts[0] !== "Bearer") {
-      return res
-        .status(400)
-        .json({ error: "Format must be: Bearer [authtoken]" });
-    }
-
-    const authtoken = parts[1];
-    const { rows: token_rows } = await query(
-      `SELECT a.user_id 
-       FROM app.auths a
-       WHERE a.token = $1`,
-      [authtoken]
-    );
-
-    if (token_rows.length === 0) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const userId = token_rows[0].user_id;
+    const userId = await validateAndGetUserIdFromAuthToken(req, res);
+    if (!userId) return; // validation failed, response already sent
+    
+    await autoUpdateJobStatuses(userId); // auto-update job statuses before fetching jobs
 
     const { status, company, q, from, to, limit = 50 } = req.query;
     const clauses = ["user_id = $1"];
@@ -309,14 +290,30 @@ app.get("/v1/tools/jobs", async (req, res) => {
     }
 
     const sql = `
-      SELECT id, company_name, position, status, date_applied, posting_link, created_at
+      SELECT id, company_name, position, status, date_applied, posting_link, created_at, posting_description, resume_s3_link
       FROM app.jobs
       WHERE ${clauses.join(" AND ")}
       ORDER BY created_at DESC
       LIMIT ${Math.min(Number(limit) || 50, 200)}`;
 
     const { rows } = await query(sql, args);
-    res.json(rows);
+    console.log("rows:", rows);
+
+    // TODO: convert the s3 links into resume data
+    let s3DAO = new ResumeS3DAO();
+
+      const modifiedRows = await Promise.all(rows.map(async row => {
+        if (row.resume_s3_link) {
+          return {
+            ...row,
+            resumeBytes: await s3DAO.getResume(row.resume_s3_link)
+          };
+        } else {
+          return row;
+        }
+      }));
+      res.json(modifiedRows);
+
   } catch (e) {
     console.error("Get jobs error:", e);
     res.status(500).json({ error: "internal" });
@@ -353,3 +350,4 @@ process.on("SIGTERM", async () => {
   await close();
   process.exit(0);
 });
+
