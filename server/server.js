@@ -2,7 +2,11 @@ import express from "express";
 import { query, warmup, close } from "./db.js";
 import bcrypt from "bcryptjs";
 import cors from "cors";
-import { createAuthToken, autoUpdateJobStatuses, validateAndGetUserIdFromAuthToken } from "./helperMethods.js";
+import {
+  createAuthToken,
+  autoUpdateJobStatuses,
+  validateAndGetUserIdFromAuthToken,
+} from "./helperMethods.js";
 import { ResumeS3DAO } from "./s3.js";
 
 const app = express();
@@ -259,7 +263,7 @@ app.get("/v1/tools/jobs", async (req, res) => {
   try {
     const userId = await validateAndGetUserIdFromAuthToken(req, res);
     if (!userId) return; // validation failed, response already sent
-    
+
     await autoUpdateJobStatuses(userId); // auto-update job statuses before fetching jobs
 
     const { status, company, q, from, to, limit = 50 } = req.query;
@@ -302,21 +306,95 @@ app.get("/v1/tools/jobs", async (req, res) => {
     // TODO: convert the s3 links into resume data
     let s3DAO = new ResumeS3DAO();
 
-      const modifiedRows = await Promise.all(rows.map(async row => {
+    const modifiedRows = await Promise.all(
+      rows.map(async (row) => {
         if (row.resume_s3_link) {
           return {
             ...row,
-            resumeBytes: await s3DAO.getResume(row.resume_s3_link)
+            resumeBytes: await s3DAO.getResume(row.resume_s3_link),
           };
         } else {
           return row;
         }
-      }));
-      res.json(modifiedRows);
-
+      })
+    );
+    res.json(modifiedRows);
   } catch (e) {
     console.error("Get jobs error:", e);
     res.status(500).json({ error: "internal" });
+  }
+});
+
+app.patch("/v1/tools/jobs/:id", async (req, res) => {
+  try {
+    const userId = await validateAndGetUserIdFromAuthToken(req, res);
+    if (!userId) return; // validation failed, response already sent
+
+    const jobId = Number(req.params.id);
+    if (!Number.isInteger(jobId)) {
+      return res.status(400).json({ error: "Invalid job id" });
+    }
+
+    const { status, companyName, position, href, description, dateApplied } =
+      req.body;
+
+    const setClauses = [];
+    const values = [];
+
+    const addField = (columnName, value) => {
+      values.push(value);
+      const idx = values.length;
+      setClauses.push(`${columnName} = $${idx}`);
+    };
+
+    if (status !== undefined) {
+      addField("status", status);
+    }
+    if (companyName !== undefined) {
+      addField("company_name", companyName);
+    }
+    if (position !== undefined) {
+      addField("position", position);
+    }
+    if (href !== undefined) {
+      addField("posting_link", href);
+    }
+    if (description !== undefined) {
+      addField("posting_description", description);
+    }
+    if (dateApplied !== undefined) {
+      addField("date_applied", dateApplied);
+    }
+
+    if (setClauses.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "No updatable fields provided in request body" });
+    }
+
+    const jobIdIndex = values.length + 1;
+    const userIdIndex = values.length + 2;
+
+    const sql = `
+      UPDATE app.jobs
+      SET ${setClauses.join(", ")}
+      WHERE id = $${jobIdIndex} AND user_id = $${userIdIndex}
+      RETURNING id, company_name, position, status, date_applied,
+                posting_link, created_at, posting_description, resume_s3_link
+    `;
+
+    values.push(jobId, userId);
+
+    const { rows } = await query(sql, values);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    return res.status(200).json(rows[0]);
+  } catch (e) {
+    console.error("Update job error:", e);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -350,4 +428,3 @@ process.on("SIGTERM", async () => {
   await close();
   process.exit(0);
 });
-
