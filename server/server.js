@@ -266,39 +266,42 @@ app.get("/v1/tools/jobs", async (req, res) => {
 
     await autoUpdateJobStatuses(userId); // auto-update job statuses before fetching jobs
 
-    const { status, company, q, from, to, limit = 50 } = req.query;
-    const clauses = ["user_id = $1"];
+    // const { status, company, q, from, to, limit = 50 } = req.query;
+    // const clauses = ["user_id = $1"];
     const args = [userId];
-    let i = 2;
+    // let i = 2;
 
-    if (status) {
-      clauses.push(`status = $${i++}`);
-      args.push(status);
-    }
-    if (company) {
-      clauses.push(`company_name ILIKE $${i++}`);
-      args.push(`%${company}%`);
-    }
-    if (from) {
-      clauses.push(`date_applied >= $${i++}`);
-      args.push(from);
-    }
-    if (to) {
-      clauses.push(`date_applied <= $${i++}`);
-      args.push(to);
-    }
-    if (q) {
-      clauses.push(`(position ILIKE $${i} OR posting_description ILIKE $${i})`);
-      args.push(`%${q}%`);
-      i++;
-    }
+    // if (status) {
+    //   clauses.push(`status = $${i++}`);
+    //   args.push(status);
+    // }
+    // if (company) {
+    //   clauses.push(`company_name ILIKE $${i++}`);
+    //   args.push(`%${company}%`);
+    // }
+    // if (from) {
+    //   clauses.push(`date_applied >= $${i++}`);
+    //   args.push(from);
+    // }
+    // if (to) {
+    //   clauses.push(`date_applied <= $${i++}`);
+    //   args.push(to);
+    // }
+    // if (q) {
+    //   clauses.push(`(position ILIKE $${i} OR posting_description ILIKE $${i})`);
+    //   args.push(`%${q}%`);
+    //   i++;
+    // }
 
     const sql = `
       SELECT id, company_name, position, status, date_applied, posting_link, created_at, posting_description, resume_s3_link
       FROM app.jobs
-      WHERE ${clauses.join(" AND ")}
-      ORDER BY created_at DESC
-      LIMIT ${Math.min(Number(limit) || 50, 200)}`;
+      WHERE user_id = $1
+      ORDER BY created_at DESC;
+      `;
+
+    // LIMIT ${Math.min(Number(limit) || 50, 200)};
+    // ${clauses.join(" AND ")}
 
     const { rows } = await query(sql, args);
     console.log("rows:", rows);
@@ -335,8 +338,9 @@ app.patch("/v1/tools/jobs/:id", async (req, res) => {
       return res.status(400).json({ error: "Invalid job id" });
     }
 
-    const { status, companyName, position, href, description, dateApplied } =
-      req.body;
+    // Uncomment to add more updatable fields
+    // , companyName, position, href, description, dateApplied } = req.body;
+    const { status } = req.body;
 
     const setClauses = [];
     const values = [];
@@ -350,21 +354,21 @@ app.patch("/v1/tools/jobs/:id", async (req, res) => {
     if (status !== undefined) {
       addField("status", status);
     }
-    if (companyName !== undefined) {
-      addField("company_name", companyName);
-    }
-    if (position !== undefined) {
-      addField("position", position);
-    }
-    if (href !== undefined) {
-      addField("posting_link", href);
-    }
-    if (description !== undefined) {
-      addField("posting_description", description);
-    }
-    if (dateApplied !== undefined) {
-      addField("date_applied", dateApplied);
-    }
+    // if (companyName !== undefined) {
+    //   addField("company_name", companyName);
+    // }
+    // if (position !== undefined) {
+    //   addField("position", position);
+    // }
+    // if (href !== undefined) {
+    //   addField("posting_link", href);
+    // }
+    // if (description !== undefined) {
+    //   addField("posting_description", description);
+    // }
+    // if (dateApplied !== undefined) {
+    //   addField("date_applied", dateApplied);
+    // }
 
     if (setClauses.length === 0) {
       return res
