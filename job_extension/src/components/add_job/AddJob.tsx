@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useRef } from "react";
 
-function AddJob() {
+type AddJobProps = {
+  onJobAdded: () => void;
+};
+
+function AddJob({ onJobAdded }: AddJobProps) {
   const [companyName, setCompanyName] = useState("");
   const [position, setPosition] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [resumeBytes, setResumeBytes] = useState<Uint8Array | null>(null);
   const [resumeFileExtension, setResumeFileExtension] = useState<string>("");
-  const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  // const navigate = useNavigate();
 
   const handleResumeFile = (event: any) => {
     if (event.target.files.length > 0) {
@@ -45,20 +53,26 @@ function AddJob() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // stop page reload
+    e.preventDefault();
     setError(null);
-    setCompanyName("");
-    setPosition("");
-    navigate("/Tools");
-    console.log(error);
-    console.log(resumeBytes);
 
-    chrome.runtime.sendMessage({ type: "GET_PAGE_HREF" }, async (response) => {
-      let href = response.url;
-      console.log("Here is the href", response);
+    // Ask Chrome for the active tab
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const tab = tabs[0];
+
+      if (!tab || !tab.url) {
+        setError(
+          "Could not determine the current page URL. Open the job posting in a normal tab and try again."
+        );
+        return;
+      }
+
+      const href = tab.url; // this is what your server expects
+
       const { authToken } = await chrome.storage.local.get("authToken");
+
       try {
-        const response = await fetch("http://localhost:8080/v1/tools/add-job", {
+        const res = await fetch("http://localhost:8080/v1/tools/add-job", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -68,30 +82,101 @@ function AddJob() {
             description,
             href,
             resumeBytes,
-            resumeFileExtension
+            resumeFileExtension,
           }),
         });
 
-        const body = await response.json().catch(() => ({}));
+        const body = await res.json().catch(() => ({}));
 
-        if (!response.ok) {
+        if (!res.ok) {
           const message =
             body && (body.error || body.message)
               ? body.error || body.message
-              : `Request failed (${response.status})`;
+              : `Request failed (${res.status})`;
           setError(String(message));
           return;
         }
-        navigate("/Tools");
+
+        // Success: clear the form
+        setCompanyName("");
+        setPosition("");
+        setDescription("");
+        setResumeBytes(null);
+        setResumeFileExtension("");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+
+        // Tell Wrapper to switch to the list tab
+        onJobAdded();
       } catch (error) {
         setError(
-          "Network error — please check the server or your connection." +
-          String(error)
+          "Network error. Please check the server or your connection. " +
+            String(error)
         );
         console.error(error);
       }
     });
   };
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault(); // stop page reload
+  //   setError(null);
+  //   // setCompanyName("");
+  //   // setPosition("");
+  //   // navigate("/Tools");
+  //   // console.log(error);
+  //   // console.log(resumeBytes);
+
+  //   chrome.runtime.sendMessage({ type: "GET_PAGE_HREF" }, async (response) => {
+  //     let href = response.url;
+  //     console.log("Here is the href", response);
+  //     const { authToken } = await chrome.storage.local.get("authToken");
+  //     try {
+  //       const response = await fetch("http://localhost:8080/v1/tools/add-job", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({
+  //           authToken,
+  //           companyName,
+  //           position,
+  //           description,
+  //           href,
+  //           resumeBytes,
+  //           resumeFileExtension,
+  //         }),
+  //       });
+
+  //       const body = await response.json().catch(() => ({}));
+
+  //       if (!response.ok) {
+  //         const message =
+  //           body && (body.error || body.message)
+  //             ? body.error || body.message
+  //             : `Request failed (${response.status})`;
+  //         setError(String(message));
+  //         return;
+  //       }
+  //       setCompanyName("");
+  //       setPosition("");
+  //       setDescription("");
+  //       setResumeBytes(null);
+  //       setResumeFileExtension("");
+  //       if (fileInputRef.current) {
+  //         fileInputRef.current.value = "";
+  //       }
+
+  //       // Tell the parent (Wrapper) to switch back to the list tab
+  //       onJobAdded();
+
+  //       // navigate("/Tools");
+  //     } catch (error) {
+  //       setError(
+  //         "Network error — please check the server or your connection." +
+  //           String(error)
+  //       );
+  //       console.error(error);
+  //     }
+  //   });
+  // };
 
   const handleAutoFillAll = () => {
     // TODO: THIS IS WHERE IT'S GOING TO CALL THE SCRAPER
@@ -139,7 +224,12 @@ function AddJob() {
           />
         </div>
 
-        <input type="file" onChange={handleResumeFile} id="file-upload-input" />
+        <input
+          type="file"
+          onChange={handleResumeFile}
+          id="file-upload-input"
+          ref={fileInputRef}
+        />
 
         <div className="button-group">
           <button
