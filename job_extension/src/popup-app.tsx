@@ -23,6 +23,7 @@ function App() {
           setVerified(await res.ok);
         } catch (error) {
           console.error(error);
+          setVerified(false);
         }
       }
     };
@@ -34,12 +35,39 @@ function App() {
     <Routes>
       <Route
         path="/Login"
-        element={verified ? <Navigate to="/Tools" replace /> : <Login />}
+        element={
+          verified ? (
+            <Navigate to="/Tools" replace />
+          ) : (
+            <Login onLoginSuccess={() => setVerified(true)} />
+          )
+        }
       />
       <Route path="/Register" element={<Register />} />
-      <Route path="/Tools" element={<Wrapper />} />
-      <Route path="/" element={<Wrapper />} />
-      <Route path="*" element={<Wrapper />} />
+      <Route
+        path="/Tools"
+        element={
+          verified ? (
+            <Wrapper onLogout={() => setVerified(false)} />
+          ) : (
+            <Navigate to="/Login" replace />
+          )
+        }
+      />
+      <Route
+        path="/"
+        element={
+          verified ? (
+            <Wrapper onLogout={() => setVerified(false)} />
+          ) : (
+            <Navigate to="/Login" replace />
+          )
+        }
+      />
+      <Route
+        path="*"
+        element={<Wrapper onLogout={() => setVerified(false)} />}
+      />
     </Routes>
   );
 }
