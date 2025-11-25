@@ -30,8 +30,9 @@
 | 2025-11-24 | Wrote Final Report                                                                       | 1.0   | Connor |
 | 2025-11-24 | Constructed final system design and erd                                                  | 1.0   | Connor |
 | 2025-11-24 | Fixed database (service paused for unknown reasons)                                      | 0.5   | Connor |
+| 2025-11-24 | Fixed frontend routing issues (logout and add job button) and fixed undefined href error | 3.0   | Connor |
 
-- **Connor Hours**: 17
+- **Connor Hours**: 20
 - **Katie Hours**: 22
 - **Kate Hours**: 6.5
-- **Total**: 45.5
+- **Total**: 48.5
