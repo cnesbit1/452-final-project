@@ -4,7 +4,7 @@
 
 ## Summary of the project
 
-Our project is a Chrome browser extension that allows users to organize and categorize job applications. To do that, this extension will store job application details and your associated resume, present a clean view of all your current applications, and let you modify the status of such applications as you progress in your job search. It will also show when a company is letting your application stall and present associated stats of certain companies.
+Our project is a Chrome browser extension that allows users to organize and categorize job applications. To do that, this extension will store job application details and your associated resume, present a clean view of all your current applications, and let you modify the status of such applications as you progress in your job search. It will also show when a company is letting your application stall.
 
 ---
 
