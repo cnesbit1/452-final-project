@@ -26,8 +26,12 @@
 | 2025-11-19 | Progress report and planning                                                             | 0.5   |  All 3 |
 | 2025-11-19 | Create more cohesive FE                                                                  | 2.0   |   Kate |
 | 2025-11-21 | Added template job modification endpoint                                                 | 1.0   | Connor |
+| 2025-11-24 | Simplified endpoints (took out filtering and changeable fields)                          | 0.5   | Connor |
+| 2025-11-24 | Wrote Final Report                                                                       | 1.0   | Connor |
+| 2025-11-24 | Constructed final system design and erd                                                  | 1.0   | Connor |
+| 2025-11-24 | Fixed database (service paused for unknown reasons)                                      | 0.5   | Connor |
 
-- **Connor Hours**: 14
+- **Connor Hours**: 17
 - **Katie Hours**: 22
 - **Kate Hours**: 6.5
-- **Total**: 42.5
+- **Total**: 45.5
