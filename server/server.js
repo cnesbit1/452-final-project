@@ -253,6 +253,11 @@ app.post("/v1/tools/add-job", async (req, res) => {
       values
     );
     console.log("Job added:", job_rows);
+
+    return res.status(201).json({
+      success: true,
+      jobId: job_rows[0].id,
+    });
   } catch (e) {
     console.error("Add job error:", e);
     res.status(500).json({ error: "Internal server error" });
