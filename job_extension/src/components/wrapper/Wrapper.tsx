@@ -3,7 +3,11 @@ import AddJob from "../add_job/AddJob";
 import List from "../list/List";
 import { useNavigate } from "react-router-dom";
 
-export default function Wrapper() {
+type WrapperProps = {
+  onLogout: () => void;
+};
+
+export default function Wrapper({ onLogout }: WrapperProps) {
   const [activeTab, setActiveTab] = useState("view");
   const navigate = useNavigate();
 
@@ -20,6 +24,7 @@ export default function Wrapper() {
         return;
       }
       await chrome.storage.local.remove("authToken");
+      onLogout();
       navigate("/Login");
     } catch (err) {
       console.error("Error calling backend:", err);
@@ -77,7 +82,7 @@ export default function Wrapper() {
       <div className="p-6">
         {activeTab === "view" && <List />}
 
-        {activeTab === "add" && <AddJob />}
+        {activeTab === "add" && <AddJob onJobAdded={() => setActiveTab("view")} />}
       </div>
     </div>
   );
