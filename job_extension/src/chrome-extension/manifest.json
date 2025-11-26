@@ -2,10 +2,16 @@
   "manifest_version": 3,
   "name": "The Joblessness Optimizer",
   "version": "1.0.0",
+  "permissions": ["scripting", "activeTab", "storage", "sidePanel"],
   "action": {
-    "default_popup": "popup.html"
+    "default_icon": {
+      "16": "public/16.png",
+      "48": "public/48.png"
+    }
   },
-  "permissions": ["scripting", "activeTab", "storage"],
+  "side_panel": {
+    "default_path": "popup.html"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
