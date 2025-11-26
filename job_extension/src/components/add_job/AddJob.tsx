@@ -191,7 +191,7 @@ function AddJob({ onJobAdded }: AddJobProps) {
 
   return (
     <div className="container">
-      <h2>Job: This is the one, I'm sure of it</h2>
+      <h2>This One’s Going to Pay the Bills</h2>
       {/* {error && <div role="alert" className="error">{error}</div>} */}
       <form onSubmit={handleSubmit} className="form">
         <input

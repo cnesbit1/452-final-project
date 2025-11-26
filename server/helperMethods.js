@@ -59,7 +59,6 @@ export async function validateAndGetUserIdFromAuthToken(req, res){
     }
 
     const userId = token_rows[0].user_id;
-    console.log("validation done");
     return userId;
 }
 

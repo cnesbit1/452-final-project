@@ -270,34 +270,6 @@ app.get("/v1/tools/jobs", async (req, res) => {
     if (!userId) return; // validation failed, response already sent
 
     await autoUpdateJobStatuses(userId); // auto-update job statuses before fetching jobs
-
-    // const { status, company, q, from, to, limit = 50 } = req.query;
-    // const clauses = ["user_id = $1"];
-    const args = [userId];
-    // let i = 2;
-
-    // if (status) {
-    //   clauses.push(`status = $${i++}`);
-    //   args.push(status);
-    // }
-    // if (company) {
-    //   clauses.push(`company_name ILIKE $${i++}`);
-    //   args.push(`%${company}%`);
-    // }
-    // if (from) {
-    //   clauses.push(`date_applied >= $${i++}`);
-    //   args.push(from);
-    // }
-    // if (to) {
-    //   clauses.push(`date_applied <= $${i++}`);
-    //   args.push(to);
-    // }
-    // if (q) {
-    //   clauses.push(`(position ILIKE $${i} OR posting_description ILIKE $${i})`);
-    //   args.push(`%${q}%`);
-    //   i++;
-    // }
-
     const sql = `
       SELECT id, company_name, position, status, date_applied, posting_link, created_at, posting_description, resume_s3_link
       FROM app.jobs
@@ -310,25 +282,58 @@ app.get("/v1/tools/jobs", async (req, res) => {
 
     const { rows } = await query(sql, args);
     console.log("rows:", rows);
-
-    // TODO: convert the s3 links into resume data
-    let s3DAO = new ResumeS3DAO();
-
-    const modifiedRows = await Promise.all(
-      rows.map(async (row) => {
-        if (row.resume_s3_link) {
-          return {
-            ...row,
-            resumeBytes: await s3DAO.getResume(row.resume_s3_link),
-          };
-        } else {
-          return row;
-        }
-      })
-    );
-    res.json(modifiedRows);
+    res.json(rows);
   } catch (e) {
     console.error("Get jobs error:", e);
+    res.status(500).json({ error: "internal" });
+  }
+});
+
+app.get("/v1/tools/get-resume", async (req, res) => {
+  try {
+    const {resume_s3_link} = req.body;
+    const userId = await validateAndGetUserIdFromAuthToken(req, res);
+    if (!userId) return; // validation failed, response already sent
+
+    // Verify that it is their resume
+    const { rows } = await query(
+      `SELECT id FROM app.jobs
+       WHERE user_id = $1 AND resume_s3_link = $2`,
+      [userId, resume_s3_link]
+    );
+    if (rows.length === 0) {
+      return res.status(403).json({ error: "Forbidden: Access to resume denied" });
+    }
+
+    let s3DAO = new ResumeS3DAO();
+    const resumeBytes = await s3DAO.getResume(resume_s3_link)
+    res.json(resumeBytes);
+  } catch (e) {
+    console.error("Get resume error:", e);
+    res.status(500).json({ error: "internal" });
+  }
+});
+
+app.get("/v1/tools/get-ghost-stat/:company_name", async (req, res) => {
+  try {
+    const company_name = req.params.company_name;
+    const userId = await validateAndGetUserIdFromAuthToken(req, res);
+    if (!userId) return; // validation failed, response already sent
+
+    const { rows } = await query(
+      `SELECT number_ghosted, total_applications FROM app.company
+       WHERE company_name = $1`,
+      [company_name]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Company not found" });
+    }
+
+    const statistic = rows[0].number_ghosted / rows[0].total_applications;
+    res.json({ghost_stat: statistic});
+  } catch (e) {
+    console.error("Get ghost stat error:", e);
     res.status(500).json({ error: "internal" });
   }
 });
