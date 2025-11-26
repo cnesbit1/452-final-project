@@ -95,3 +95,8 @@ chrome.runtime.onMessage.addListener(
     return undefined;
   }
 );
+
+
+chrome.action.onClicked.addListener((tab) => {
+  chrome.sidePanel.open({ windowId: tab.windowId });
+});

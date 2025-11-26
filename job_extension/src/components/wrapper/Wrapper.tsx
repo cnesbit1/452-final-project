@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddJob from "../add_job/AddJob";
 import List from "../list/List";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,17 @@ type WrapperProps = {
 export default function Wrapper({ onLogout }: WrapperProps) {
   const [activeTab, setActiveTab] = useState("view");
   const navigate = useNavigate();
+
+  // Resize popup based on active tab
+  useEffect(() => {
+    if (activeTab === "view") {
+      document.body.style.width = '1200px';
+      document.body.style.minHeight = '750px';
+    } else if (activeTab === "add") {
+      document.body.style.width = '400px';
+      document.body.style.minHeight = '350px';
+    }
+  }, [activeTab]);
 
   const handleLogout = async () => {
     try {
