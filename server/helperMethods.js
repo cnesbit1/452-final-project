@@ -70,7 +70,7 @@ export async function autoUpdateJobStatuses(user_id){
       SET status = 'ghosted'
       WHERE user_id = $1
       AND status <> 'ghosted' AND status <> 'offer' AND status <> 'rejected'
-      AND last_date_updated < NOW() - INTERVAL '30 days'`,
+      AND last_date_updated < NOW() - INTERVAL '2 minutes'`,
       [user_id]
     );
 }
