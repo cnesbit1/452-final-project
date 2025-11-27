@@ -93,7 +93,7 @@ export default function Wrapper({ onLogout }: WrapperProps) {
       <div className="p-6">
         {activeTab === "view" && <List />}
 
-        {activeTab === "add" && <AddJob onJobAdded={() => setActiveTab("view")} />}
+        {activeTab === "add" && <AddJob navigateToView={() => setActiveTab("view")} />}
       </div>
     </div>
   );

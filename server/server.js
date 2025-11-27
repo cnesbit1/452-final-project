@@ -277,9 +277,6 @@ app.get("/v1/tools/jobs", async (req, res) => {
       ORDER BY created_at DESC;
       `;
 
-    // LIMIT ${Math.min(Number(limit) || 50, 200)};
-    // ${clauses.join(" AND ")}
-
     const { rows } = await query(sql, args);
     console.log("rows:", rows);
     res.json(rows);
@@ -338,6 +335,7 @@ app.get("/v1/tools/get-ghost-stat/:company_name", async (req, res) => {
   }
 });
 
+// endpoint for editing jobs (probably only status is needed)
 app.patch("/v1/tools/jobs/:id", async (req, res) => {
   try {
     const userId = await validateAndGetUserIdFromAuthToken(req, res);
