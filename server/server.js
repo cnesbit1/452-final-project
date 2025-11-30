@@ -154,7 +154,6 @@ app.post("/v1/auth/register", async (req, res) => {
     );
     const newId = rows[0].id;
 
-    console.log("User created", rows);
     if (rows.length === 0) {
       res.status(400).json({ error: "User not added to users table" });
     }
@@ -210,15 +209,11 @@ app.post("/v1/tools/add-job", async (req, res) => {
       // get the text from the resume file and insert that
       let s3DAO = new ResumeS3DAO();
       resumeS3Link = await s3DAO.putResume(resumeBytes, resumeFileExtension);
-      console.log("resume stored with resume/", resumeS3Link);
     }
-
-    const currentDate = new Date().toISOString();
 
     // dynamic insertion allowing for several fields to be empty
     const data = {
       user_id: user_id,
-      date_applied: currentDate,
       company_name: companyName,
       position: position,
       posting_link: href,
@@ -229,7 +224,6 @@ app.post("/v1/tools/add-job", async (req, res) => {
     // construct statement
     const allFields = [
       "user_id",
-      "date_applied",
       "company_name",
       "position",
       "posting_link",
@@ -252,7 +246,6 @@ app.post("/v1/tools/add-job", async (req, res) => {
         RETURNING id;`,
       values
     );
-    console.log("Job added:", job_rows);
 
     return res.status(201).json({
       success: true,
@@ -278,7 +271,6 @@ app.get("/v1/tools/jobs", async (req, res) => {
       `;
 
     const { rows } = await query(sql, [userId]);
-    console.log("rows:", rows);
     res.json(rows);
   } catch (e) {
     console.error("Get jobs error:", e);
@@ -286,9 +278,9 @@ app.get("/v1/tools/jobs", async (req, res) => {
   }
 });
 
-app.get("/v1/tools/get-resume", async (req, res) => {
+app.get("/v1/tools/get-resume/:resume_s3_link", async (req, res) => {
   try {
-    const {resume_s3_link} = req.body;
+    const resume_s3_link = req.params.resume_s3_link;
     const userId = await validateAndGetUserIdFromAuthToken(req, res);
     if (!userId) return; // validation failed, response already sent
 
@@ -304,7 +296,8 @@ app.get("/v1/tools/get-resume", async (req, res) => {
 
     let s3DAO = new ResumeS3DAO();
     const resumeBytes = await s3DAO.getResume(resume_s3_link)
-    res.json(resumeBytes);
+    res.set('Content-Type', 'application/pdf');
+    res.send(Buffer.from(resumeBytes));
   } catch (e) {
     console.error("Get resume error:", e);
     res.status(500).json({ error: "internal" });
@@ -362,6 +355,8 @@ app.patch("/v1/tools/jobs/:id", async (req, res) => {
     if (status !== undefined) {
       addField("status", status);
     }
+
+    addField("last_date_updated", new Date().toISOString());
     // if (companyName !== undefined) {
     //   addField("company_name", companyName);
     // }

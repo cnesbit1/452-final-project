@@ -28,16 +28,13 @@ export default function JobDetailsRow({ job }: JobDetailsRowProps) {
     try {
       const { authToken } = await chrome.storage.local.get("authToken");
       const response = await fetch(
-        "http://localhost:8080/v1/tools/get-resume",
+        "http://localhost:8080/v1/tools/get-resume/" + encodeURIComponent(job.resume_s3_link),
         {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + authToken,
           },
-          body: JSON.stringify({
-            resume_s3_link: job.resume_s3_link,
-          }),
         }
       );
 
@@ -45,10 +42,8 @@ export default function JobDetailsRow({ job }: JobDetailsRowProps) {
         throw new Error("Failed to fetch resume");
       }
 
-      const pdfBytes = await response.arrayBuffer();
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
-
       // Clean up previous URL if it exists
       if (pdfUrl) {
         URL.revokeObjectURL(pdfUrl);
