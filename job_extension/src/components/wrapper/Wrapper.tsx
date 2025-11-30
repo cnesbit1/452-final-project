@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddJob from "../add_job/AddJob";
 import List from "../list/List";
 import { useNavigate } from "react-router-dom";
@@ -10,17 +10,6 @@ type WrapperProps = {
 export default function Wrapper({ onLogout }: WrapperProps) {
   const [activeTab, setActiveTab] = useState("view");
   const navigate = useNavigate();
-
-  // Resize popup based on active tab
-  useEffect(() => {
-    if (activeTab === "view") {
-      document.body.style.width = '1200px';
-      document.body.style.minHeight = '750px';
-    } else if (activeTab === "add") {
-      document.body.style.width = '400px';
-      document.body.style.minHeight = '350px';
-    }
-  }, [activeTab]);
 
   const handleLogout = async () => {
     try {
@@ -44,12 +33,12 @@ export default function Wrapper({ onLogout }: WrapperProps) {
 
   return (
     <div
-      className="min-h-screen text-gray-900"
+      className="min-h-screen text-gray-900 w-full"
       style={{ backgroundColor: "#f8e9d2" }}
     >
       {/* Navbar */}
       <nav
-        className="flex items-center justify-between px-6 py-4 shadow"
+        className="flex items-center justify-between px-4 py-3 shadow w-full"
         style={{ backgroundColor: "white" }}
       >
         <div className="flex gap-4">
@@ -90,10 +79,12 @@ export default function Wrapper({ onLogout }: WrapperProps) {
       </nav>
 
       {/* Page Content */}
-      <div className="p-6">
+      <div className="p-4 w-full">
         {activeTab === "view" && <List />}
 
-        {activeTab === "add" && <AddJob navigateToView={() => setActiveTab("view")} />}
+        {activeTab === "add" && (
+          <AddJob navigateToView={() => setActiveTab("view")} />
+        )}
       </div>
     </div>
   );

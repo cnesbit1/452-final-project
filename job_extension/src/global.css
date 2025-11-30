@@ -29,8 +29,9 @@ body {
   padding: 24px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
-  width: 100%;
-  max-width: 550px;
+  width: calc(100% - 40px);
+  max-width: 100%;
+  min-width: 300px;
   text-align: center;
 }
 
@@ -223,4 +224,155 @@ a:hover {
   font-size: 16px;
   color: #6b7280;
   margin: 0;
+}
+
+/* Table Styles */
+.list-container {
+  width: 100%;
+  padding: 20px;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  table-layout: auto;
+}
+
+table thead th {
+  background-color: #d4a574;
+  color: white;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #c19660;
+  position: sticky;
+  top: 0;
+}
+
+table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+table thead th:nth-child(1) {
+  min-width: 120px;
+}
+table thead th:nth-child(2) {
+  min-width: 150px;
+}
+table thead th:nth-child(3) {
+  min-width: 120px;
+}
+table thead th:nth-child(4) {
+  min-width: 100px;
+}
+
+table tbody td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+table tbody tr:nth-child(even):hover {
+  background-color: #f3f4f6;
+}
+
+table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Dynamic Wrapper Styles */
+.dynamic-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  overflow: auto;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+  .container {
+    margin: 10px auto;
+    padding: 16px;
+    width: calc(100% - 20px);
+  }
+
+  .list-container {
+    padding: 10px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  table thead th,
+  table tbody td {
+    padding: 8px 6px;
+  }
+
+  /* Better mobile table layout */
+  .list-container table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Make job details more readable on mobile */
+  .bg-gray-50 td {
+    padding: 12px 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 5px auto;
+    padding: 12px;
+    width: calc(100% - 10px);
+  }
+
+  table {
+    font-size: 11px;
+    min-width: 600px; /* Ensure table doesn't get too compressed */
+  }
+
+  table thead th,
+  table tbody td {
+    padding: 6px 4px;
+  }
+
+  /* Stack form elements better on very small screens */
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .button {
+    width: 100%;
+  }
 }

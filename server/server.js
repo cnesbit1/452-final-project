@@ -277,7 +277,7 @@ app.get("/v1/tools/jobs", async (req, res) => {
       ORDER BY created_at DESC;
       `;
 
-    const { rows } = await query(sql, args);
+    const { rows } = await query(sql, [userId]);
     console.log("rows:", rows);
     res.json(rows);
   } catch (e) {

@@ -7,10 +7,10 @@ import DynamicSizeWrapper from "./components/DynamicPopupSizeWrapper";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {/* Wider container for the job tracking extension popup */}
+    {/* Responsive container for the job tracking extension popup */}
     <div
-      className="overflow-auto"
-      style={{ backgroundColor: "#f8e9d2" }}
+      className="w-full h-full overflow-auto"
+      style={{ backgroundColor: "#f8e9d2", minHeight: "100vh" }}
     >
       <BrowserRouter>
         <DynamicSizeWrapper>
