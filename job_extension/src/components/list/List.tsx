@@ -104,6 +104,8 @@ export default function List() {
                             ? "#fef3c7"
                             : job.status === "offer"
                             ? "#dbeafe"
+                            : job.status === "rejected"
+                            ? "#fee2e2"
                             : job.status === "ghosted"
                             ? "#f3f4f6"
                             : "#fecaca",
@@ -114,6 +116,8 @@ export default function List() {
                             ? "#92400e"
                             : job.status === "offer"
                             ? "#1e40af"
+                            : job.status === "rejected"
+                            ? "#991b1b"
                             : job.status === "ghosted"
                             ? "#6b7280"
                             : "#991b1b",
@@ -122,6 +126,7 @@ export default function List() {
                       <option value="applied">applied</option>
                       <option value="interview">interview</option>
                       <option value="offer">offer</option>
+                      <option value="rejected">rejected</option>
                       <option value="ghosted">ghosted</option>
                     </select>
                   </td>
