@@ -29,7 +29,7 @@ A: Our project does not integrate with AI at this point. We have plans to incorp
 
 Q: How did you use AI to assist in building your project? Please, describe.\
 A - Connor: I used LLMs to help me identify errors, provide context and ideas for next steps, and construct templates for tasks (mostly server endpoints) which I would then finish manually. I also used AI to provide a quick template server folder which our team built off over the course of the month.\
-A - Kate: N/A\
+A - Kate: I used Github Copilot to generate much of the React app code and as a sounding board to debug errors I encountered. \
 A - Katie: N/A
 
 ---
@@ -41,7 +41,7 @@ A: When you’re applying to lots of jobs, it’s hard to be motivated to keep a
 
 P: Key learnings from the project (please try to come up with at least 3)\
 A - Connor: Looking back to the end of October has let me realize that I have gained many insights and skills from this final project. I learned how to concisely compare and distinguish between different database platforms after reading many long documentation pages, how to use mermaid diagraming tools, and the importance of avoiding refactoring pitfalls (refactoring our database tables after already populating them is not easy). I also gained exposure to the Postman graphical interface for sending requests and receiving responses which was new to me.\
-A - Kate: N/A\
+A - Kate: Vibe coding - Github copilot was a very helpful tool for building the React app. The most tricky part to get right was determining how much context to give it. Too much caused it to hallucinate and too little caused it to make irrelevant code.\
 A - Katie: N/A
 
 P: Explanation if applicable of failover strategy, scaling characteristics, performance characteristics, authentication, concurrency, etc.\
