@@ -22,7 +22,7 @@ Our project is a Chrome browser extension that allows users to organize and cate
 ## Final Project QA
 
 Q: What did you learn in this project?\
-A: How is this different from question 7? TBD
+A: Due to the DRY principle, we have not repeated this information at this point in the report. It is included within the answer to the key learnings prompt further below.
 
 Q: Does your project integrate with AI in any interesting way? If yes, please describe.\
 A: Our project does not integrate with AI at this point. We have plans to incorporate AI into our chrome extension in the future however to quicken job application submissions to our database. It would help scrape job application details from the site a user is on and autopopulate the fields for user review. AI is a good fit because it can extropolate which fields (which change from website to website) should be copied for the title, description, etc. We have the user manually fill those inputs at the moment.
