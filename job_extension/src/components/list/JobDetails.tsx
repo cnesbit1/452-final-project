@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Job } from "./List";
 
 type JobDetailsRowProps = {
@@ -8,6 +8,8 @@ type JobDetailsRowProps = {
 export default function JobDetailsRow({ job }: JobDetailsRowProps) {
   const [isLoadingResume, setIsLoadingResume] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [ghostStat, setGhostStat] = useState<number | null>(null);
+  const [isLoadingGhostStat, setIsLoadingGhostStat] = useState(false);
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -17,8 +19,48 @@ export default function JobDetailsRow({ job }: JobDetailsRowProps) {
     });
   };
 
+  useEffect(() => {
+    fetchGhostStat();
+  }, [job.company_name]);
+
   const handleLinkClick = (url: string) => {
     chrome.tabs.create({ url });
+  };
+
+  const fetchGhostStat = async () => {
+    if (!job.company_name || ghostStat !== null) return;
+
+    setIsLoadingGhostStat(true);
+    try {
+      const { authToken } = await chrome.storage.local.get("authToken");
+      const response = await fetch(
+        `http://localhost:8080/v1/tools/get-ghost-stat/${encodeURIComponent(
+          job.company_name
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + authToken,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Company not found, skip setting ghost stat
+          return;
+        }
+        throw new Error("Failed to fetch ghost stat");
+      }
+
+      const data = await response.json();
+      setGhostStat(data.ghost_stat);
+    } catch (error) {
+      console.error("Error fetching ghost stat:", error);
+    } finally {
+      setIsLoadingGhostStat(false);
+    }
   };
 
   const viewResume = async () => {
@@ -28,7 +70,8 @@ export default function JobDetailsRow({ job }: JobDetailsRowProps) {
     try {
       const { authToken } = await chrome.storage.local.get("authToken");
       const response = await fetch(
-        "http://localhost:8080/v1/tools/get-resume/" + encodeURIComponent(job.resume_s3_link),
+        "http://localhost:8080/v1/tools/get-resume/" +
+          encodeURIComponent(job.resume_s3_link),
         {
           method: "GET",
           headers: {
@@ -95,19 +138,35 @@ export default function JobDetailsRow({ job }: JobDetailsRowProps) {
               </div>
             </div>
             {job.resume_s3_link && (
-            <div>
-              <strong>Resume:</strong>
               <div>
-                <button
-                  onClick={viewResume}
-                  disabled={isLoadingResume}
-                  className="button"
-                  style={{ padding: "4px 12px", fontSize: "14px" }}
-                >
-                  {isLoadingResume ? "Loading..." : "View Resume"}
-                </button>
+                <strong>Resume:</strong>
+                <div>
+                  <button
+                    onClick={viewResume}
+                    disabled={isLoadingResume}
+                    className="button"
+                    style={{ padding: "4px 12px", fontSize: "14px" }}
+                  >
+                    {isLoadingResume ? "Loading..." : "View Resume"}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
+            {(ghostStat !== null || isLoadingGhostStat) && (
+              <div>
+                <strong>Ghost Rate:</strong>
+                <div>
+                  {isLoadingGhostStat ? (
+                    "Loading..."
+                  ) : (
+                    <>
+                      On average, this company ghosts{" "}
+                      <strong>{(ghostStat! * 100).toFixed(1)}%</strong> of
+                      applicants.
+                    </>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
