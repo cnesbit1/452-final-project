@@ -35,8 +35,10 @@
 | 2025-11-24 | Fixed frontend routing issues (logout and add job button) and fixed undefined href error | 3.0   | Connor |
 | 2025-11-29 | Added list jobs, update status, view resume UI functionality and bug fixes               | 6.0   | Kate   |
 | 2025-11-30 | Ghost stat FE                                                                            | 2.0   | Kate   |
+| 2025-12-1  | Presentation prep + present!                                                             | 1.0   | All 3  |
+| 2025-12-1  | Investigate incorrect link bug                                                           | 2.0   | Kate   |
 
 - **Connor Hours**: 20
 - **Katie Hours**: 22
-- **Kate Hours**: 17
-- **Total**: 59
+- **Kate Hours**: 20
+- **Total**: 62
