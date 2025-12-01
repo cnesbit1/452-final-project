@@ -34,8 +34,9 @@
 | 2025-11-24 | Fixed database (service paused for unknown reasons)                                      | 0.5   | Connor |
 | 2025-11-24 | Fixed frontend routing issues (logout and add job button) and fixed undefined href error | 3.0   | Connor |
 | 2025-11-29 | Added list jobs, update status, view resume UI functionality and bug fixes               | 6.0   | Kate   |
+| 2025-11-30 | Ghost stat FE                                                                            | 2.0   | Kate   |
 
 - **Connor Hours**: 20
 - **Katie Hours**: 22
-- **Kate Hours**: 15
-- **Total**: 57
+- **Kate Hours**: 17
+- **Total**: 59
