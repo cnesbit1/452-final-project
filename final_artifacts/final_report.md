@@ -10,9 +10,7 @@ Our project is a Chrome browser extension that allows users to organize and cate
 
 ## Diagrams and Demo Video
 
-<!-- This video should be replaced by our in class recording -->
-
-[![Demo Video](https://img.youtube.com/vi/QtcM5BsnWfM/0.jpg)](https://www.youtube.com/watch?v=QtcM5BsnWfM)
+[![Watch the demo](../job_extension\src\chrome-extension\public\j48x48.png)](demo_draft.mp4)
 
 ![alt text](final_design_images/systems.png)
 ![alt text](final_design_images/final_erd.png)
